@@ -50,8 +50,8 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
     <>
       <div
         ref={ref}
-        onMouseEnter={showDesktop}
-        onMouseLeave={hide}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') showDesktop(); }}
+        onPointerLeave={(e) => { if (e.pointerType === 'mouse') hide(); }}
         onPointerDown={(e) => {
           if (e.pointerType === 'touch') {
             e.stopPropagation();
