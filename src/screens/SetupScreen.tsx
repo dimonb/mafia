@@ -11,70 +11,95 @@ export default function SetupScreen() {
   return (
     <div className="min-h-screen bg-slate-900 flex flex-col">
       {/* Header */}
-      <div className="px-5 pt-10 pb-4">
-        <div className="text-3xl font-bold text-white text-center">🎭 Мафия</div>
-        <div className="text-slate-400 text-center text-sm mt-1">Настройка игры</div>
-      </div>
+      <header className="px-5 pt-10 pb-6 text-center">
+        <div className="text-4xl font-bold text-white">🎭 Мафия</div>
+        <div className="text-slate-400 text-sm mt-1">Настройка игры</div>
+      </header>
 
-      {/* Player count */}
-      <div className="mx-5 bg-slate-800 rounded-2xl p-4 mb-4">
-        <div className="text-slate-300 text-sm mb-3 font-medium">Количество игроков</div>
-        <div className="flex items-center justify-between">
-          <button
-            className="w-12 h-12 rounded-full bg-slate-700 text-white text-2xl font-bold flex items-center justify-center active:bg-slate-600 disabled:opacity-30"
-            onClick={() => dispatch({ type: 'SET_PLAYER_COUNT', count: state.playerCount - 1 })}
-            disabled={state.playerCount <= 4}
-          >
-            −
-          </button>
-          <div className="text-5xl font-bold text-white">{state.playerCount}</div>
-          <button
-            className="w-12 h-12 rounded-full bg-slate-700 text-white text-2xl font-bold flex items-center justify-center active:bg-slate-600 disabled:opacity-30"
-            onClick={() => dispatch({ type: 'SET_PLAYER_COUNT', count: state.playerCount + 1 })}
-            disabled={state.playerCount >= 20}
-          >
-            +
-          </button>
-        </div>
-      </div>
+      {/* Main content: single column on mobile, two columns on desktop */}
+      <div className="flex-1 w-full max-w-4xl mx-auto px-4 md:px-8 md:flex md:gap-6 pb-6">
 
-      {/* Role list */}
-      <div className="mx-5 bg-slate-800 rounded-2xl overflow-hidden mb-4 flex-1">
-        <div className="px-4 py-3 border-b border-slate-700">
-          <div className="text-slate-300 text-sm font-medium">Роли</div>
-        </div>
-        {ALL_ROLE_IDS.map((roleId) => {
-          const role = ROLE_DEFINITIONS[roleId];
-          const rc = state.roleCounts.find((r) => r.roleId === roleId)!;
-          const factionColor =
-            role.faction === 'mafia' ? 'text-red-400' :
-            role.faction === 'solo' ? 'text-purple-400' :
-            'text-sky-400';
-
-          return (
-            <div
-              key={roleId}
-              className="flex items-center px-4 py-3 border-b border-slate-700/50 last:border-0"
-            >
-              <div className={`w-8 h-8 rounded-full ${role.bgClass} flex items-center justify-center text-base mr-3 shrink-0`}>
-                {role.icon}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="text-white text-sm font-medium">{role.name}</div>
-                <div className={`text-xs ${factionColor}`}>{FACTION_LABELS[role.faction]}</div>
-              </div>
-              <RoleCounter
-                value={rc.count}
-                max={state.playerCount}
-                onChange={(val) => dispatch({ type: 'SET_ROLE_COUNT', roleId, count: val })}
-              />
+        {/* Left column: player count + start */}
+        <div className="md:w-72 md:shrink-0 md:flex md:flex-col md:gap-4">
+          {/* Player count */}
+          <div className="bg-slate-800 rounded-2xl p-5 mb-4 md:mb-0">
+            <div className="text-slate-300 text-sm mb-4 font-medium">Количество игроков</div>
+            <div className="flex items-center justify-between">
+              <button
+                className="w-12 h-12 rounded-full bg-slate-700 text-white text-2xl font-bold flex items-center justify-center active:bg-slate-600 hover:bg-slate-600 disabled:opacity-30 transition-colors"
+                onClick={() => dispatch({ type: 'SET_PLAYER_COUNT', count: state.playerCount - 1 })}
+                disabled={state.playerCount <= 4}
+              >
+                −
+              </button>
+              <div className="text-6xl font-bold text-white tabular-nums">{state.playerCount}</div>
+              <button
+                className="w-12 h-12 rounded-full bg-slate-700 text-white text-2xl font-bold flex items-center justify-center active:bg-slate-600 hover:bg-slate-600 disabled:opacity-30 transition-colors"
+                onClick={() => dispatch({ type: 'SET_PLAYER_COUNT', count: state.playerCount + 1 })}
+                disabled={state.playerCount >= 20}
+              >
+                +
+              </button>
             </div>
-          );
-        })}
+          </div>
+
+          {/* Start button — visible in left column on desktop, sticky footer on mobile */}
+          <div className="hidden md:block mt-auto">
+            <div className={`text-center text-sm mb-3 font-medium ${isReady ? 'text-green-400' : 'text-red-400'}`}>
+              {isReady
+                ? `Все ${state.playerCount} игроков распределены`
+                : `Настроено: ${total} / ${state.playerCount} (${total < state.playerCount ? `+${state.playerCount - total}` : `−${total - state.playerCount}`})`}
+            </div>
+            <button
+              onClick={() => dispatch({ type: 'START_DEALING' })}
+              disabled={!isReady}
+              className="w-full py-4 rounded-2xl text-white text-lg font-bold bg-indigo-600 hover:bg-indigo-500 active:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+            >
+              Начать раздачу
+            </button>
+          </div>
+        </div>
+
+        {/* Right column: role list */}
+        <div className="flex-1 bg-slate-800 rounded-2xl overflow-hidden mb-4 md:mb-0">
+          <div className="px-4 py-3 border-b border-slate-700">
+            <div className="text-slate-300 text-sm font-medium">Роли</div>
+          </div>
+          <div className="md:grid md:grid-cols-2">
+            {ALL_ROLE_IDS.map((roleId) => {
+              const role = ROLE_DEFINITIONS[roleId];
+              const rc = state.roleCounts.find((r) => r.roleId === roleId)!;
+              const factionColor =
+                role.faction === 'mafia' ? 'text-red-400' :
+                role.faction === 'solo' ? 'text-purple-400' :
+                'text-sky-400';
+
+              return (
+                <div
+                  key={roleId}
+                  className="flex items-center px-4 py-3 border-b border-slate-700/50 last:border-0 md:last:border-b md:[&:nth-last-child(2)]:border-b-0"
+                >
+                  <div className={`w-9 h-9 rounded-full ${role.bgClass} flex items-center justify-center text-lg mr-3 shrink-0`}>
+                    {role.icon}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-white text-sm font-medium">{role.name}</div>
+                    <div className={`text-xs ${factionColor}`}>{FACTION_LABELS[role.faction]}</div>
+                  </div>
+                  <RoleCounter
+                    value={rc.count}
+                    max={state.playerCount}
+                    onChange={(val) => dispatch({ type: 'SET_ROLE_COUNT', roleId, count: val })}
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
       </div>
 
-      {/* Footer */}
-      <div className="sticky bottom-0 px-5 pb-8 pt-3 bg-slate-900">
+      {/* Mobile sticky footer */}
+      <div className="md:hidden sticky bottom-0 px-4 pb-8 pt-3 bg-slate-900">
         <div className={`text-center text-sm mb-3 font-medium ${isReady ? 'text-green-400' : 'text-red-400'}`}>
           Настроено: {total} / {state.playerCount}
           {!isReady && ` (${total < state.playerCount ? `добавьте ещё ${state.playerCount - total}` : `уберите ${total - state.playerCount}`})`}

@@ -13,10 +13,10 @@ const WINNER_CONFIG: Record<Faction, { label: string; emoji: string; bg: string 
 export default function GameScreen() {
   const { state, dispatch } = useGame();
   const { players, currentDayNightPhase, dayNumber, winner } = state;
-
   const [confirmPlayerId, setConfirmPlayerId] = useState<number | null>(null);
 
   const alive = players.filter((p) => p.isAlive);
+  const dead = players.filter((p) => !p.isAlive);
   const mafiaAlive = alive.filter((p) =>
     ['mafia', 'don', 'werewolf', 'lawyer'].includes(p.roleId)
   ).length;
@@ -31,48 +31,60 @@ export default function GameScreen() {
       {/* Phase toggle */}
       <button
         onClick={() => dispatch({ type: 'SET_PHASE', phase: isNight ? 'day' : 'night' })}
-        className={`w-full py-4 flex items-center justify-center gap-3 text-lg font-bold transition-colors ${isNight ? 'bg-indigo-950 text-indigo-200' : 'bg-amber-500 text-amber-950'}`}
+        className={`w-full py-3 md:py-4 flex items-center justify-center gap-3 text-lg font-bold transition-colors ${isNight ? 'bg-indigo-950 text-indigo-200 hover:bg-indigo-900' : 'bg-amber-500 text-amber-950 hover:bg-amber-400'}`}
       >
         <span className="text-2xl">{isNight ? '🌙' : '☀️'}</span>
         <span>{isNight ? `Ночь ${dayNumber}` : `День ${dayNumber}`}</span>
-        <span className="text-sm opacity-60 ml-1">→ переключить</span>
+        <span className="text-sm opacity-50 ml-1">нажмите для переключения</span>
       </button>
 
-      {/* Players grid */}
-      <div className="flex-1 p-4">
-        <div className="grid grid-cols-3 gap-3">
-          {players.map((p) => (
-            <PlayerAvatar
-              key={p.id}
-              id={p.id}
-              isAlive={p.isAlive}
-              onClick={() => setConfirmPlayerId(p.id)}
-            />
-          ))}
-        </div>
-      </div>
+      {/* Content: stacked on mobile, side-by-side on desktop */}
+      <div className="flex-1 w-full max-w-4xl mx-auto md:flex md:gap-0 md:p-6 md:items-start">
 
-      {/* Stats bar */}
-      <div className="bg-slate-900 px-5 py-3 flex justify-around border-t border-slate-700">
-        <div className="text-center">
-          <div className="text-2xl font-bold text-white">{alive.length}</div>
-          <div className="text-slate-400 text-xs">Живых</div>
+        {/* Players grid */}
+        <div className="flex-1 p-4 md:p-0 md:pr-6">
+          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 lg:grid-cols-5 gap-3">
+            {players.map((p) => (
+              <PlayerAvatar
+                key={p.id}
+                id={p.id}
+                isAlive={p.isAlive}
+                onClick={() => setConfirmPlayerId(p.id)}
+              />
+            ))}
+          </div>
         </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-sky-400">{townAlive}</div>
-          <div className="text-slate-400 text-xs">Мирных</div>
+
+        {/* Sidebar stats — bottom bar on mobile, right column on desktop */}
+        <div className="md:w-52 md:shrink-0">
+          {/* Mobile bottom bar */}
+          <div className="md:hidden bg-slate-900 px-5 py-3 flex justify-around border-t border-slate-700">
+            <StatItem value={alive.length} label="Живых" color="text-white" />
+            <StatItem value={townAlive} label="Мирных" color="text-sky-400" />
+            <StatItem value={mafiaAlive} label="Мафии" color="text-red-400" />
+            <button onClick={() => dispatch({ type: 'RESET_GAME' })} className="text-center">
+              <div className="text-2xl">🔄</div>
+              <div className="text-slate-400 text-xs">Заново</div>
+            </button>
+          </div>
+
+          {/* Desktop sidebar */}
+          <div className="hidden md:flex md:flex-col gap-3">
+            <div className="bg-slate-900/70 rounded-2xl p-4 flex flex-col gap-3">
+              <StatCard value={alive.length} label="Живых" color="text-white" />
+              <div className="border-t border-slate-700/50" />
+              <StatCard value={townAlive} label="Мирных" color="text-sky-400" />
+              <StatCard value={mafiaAlive} label="Мафии" color="text-red-400" />
+              <StatCard value={dead.length} label="Выбыло" color="text-slate-500" />
+            </div>
+            <button
+              onClick={() => dispatch({ type: 'RESET_GAME' })}
+              className="w-full py-3 rounded-2xl bg-slate-700/70 hover:bg-slate-700 text-slate-300 text-sm font-medium transition-colors"
+            >
+              🔄 Новая игра
+            </button>
+          </div>
         </div>
-        <div className="text-center">
-          <div className="text-2xl font-bold text-red-400">{mafiaAlive}</div>
-          <div className="text-slate-400 text-xs">Мафии</div>
-        </div>
-        <button
-          onClick={() => dispatch({ type: 'RESET_GAME' })}
-          className="text-center"
-        >
-          <div className="text-2xl">🔄</div>
-          <div className="text-slate-400 text-xs">Заново</div>
-        </button>
       </div>
 
       {/* Confirm kill dialog */}
@@ -96,12 +108,30 @@ export default function GameScreen() {
           </div>
           <button
             onClick={() => dispatch({ type: 'RESET_GAME' })}
-            className="mt-4 px-8 py-4 rounded-2xl bg-white/20 text-white text-lg font-bold active:bg-white/30"
+            className="mt-4 px-8 py-4 rounded-2xl bg-white/20 hover:bg-white/30 text-white text-lg font-bold transition-colors"
           >
             Новая игра
           </button>
         </div>
       )}
+    </div>
+  );
+}
+
+function StatItem({ value, label, color }: { value: number; label: string; color: string }) {
+  return (
+    <div className="text-center">
+      <div className={`text-2xl font-bold ${color}`}>{value}</div>
+      <div className="text-slate-400 text-xs">{label}</div>
+    </div>
+  );
+}
+
+function StatCard({ value, label, color }: { value: number; label: string; color: string }) {
+  return (
+    <div className="flex items-center justify-between">
+      <div className="text-slate-400 text-sm">{label}</div>
+      <div className={`text-2xl font-bold tabular-nums ${color}`}>{value}</div>
     </div>
   );
 }

@@ -10,7 +10,7 @@ export default function RoleCard({ roleId, revealed }: RoleCardProps) {
   const role = ROLE_DEFINITIONS[roleId];
 
   return (
-    <div className="card-container w-full" style={{ height: '320px' }}>
+    <div className="card-container w-full" style={{ height: 'clamp(320px, 45vw, 400px)' }}>
       <div className={`card-inner ${revealed ? 'flipped' : ''}`}>
         {/* Back */}
         <div className="card-face card-back flex flex-col items-center justify-center gap-3">
