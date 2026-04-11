@@ -54,7 +54,6 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
         onPointerLeave={(e) => { if (e.pointerType === 'mouse') hide(); }}
         onPointerDown={(e) => {
           if (e.pointerType === 'touch') {
-            e.stopPropagation();
             open ? hide() : showMobile();
           }
         }}
