@@ -12,31 +12,22 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
   const [style, setStyle] = useState<React.CSSProperties>({});
   const ref = useRef<HTMLDivElement>(null);
 
-  function showDesktop() {
-    if (!ref.current) return;
-    const r = ref.current.getBoundingClientRect();
-    setStyle({
-      top: r.top + r.height / 2,
-      left: r.right + 8,
-      transform: 'translateY(-50%)',
-    });
-    setOpen(true);
-  }
-
-  function showMobile() {
-    if (!ref.current) return;
-    const r = ref.current.getBoundingClientRect();
+  function showAt(r: DOMRect) {
     const tooltipWidth = 224; // w-56
-    const left = Math.max(8, Math.min(r.left, window.innerWidth - tooltipWidth - 8));
-    setStyle({
-      top: r.bottom + 6,
-      left,
-    });
+    if (r.right + 8 + tooltipWidth < window.innerWidth) {
+      // Enough space to the right — show there (desktop)
+      setStyle({ top: r.top + r.height / 2, left: r.right + 8, transform: 'translateY(-50%)' });
+    } else {
+      // Not enough space — show below, clamped to screen (mobile)
+      const left = Math.max(8, Math.min(r.left, window.innerWidth - tooltipWidth - 8));
+      setStyle({ top: r.bottom + 6, left });
+    }
     setOpen(true);
   }
 
   function hide() { setOpen(false); }
 
+  // Close on any outside click
   useEffect(() => {
     if (!open) return;
     function handle(e: MouseEvent) {
@@ -50,13 +41,9 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
     <>
       <div
         ref={ref}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse') showDesktop(); }}
+        onPointerEnter={(e) => { if (e.pointerType === 'mouse') showAt(ref.current!.getBoundingClientRect()); }}
         onPointerLeave={(e) => { if (e.pointerType === 'mouse') hide(); }}
-        onClick={(e) => {
-          if ((e.nativeEvent as PointerEvent).pointerType === 'touch') {
-            open ? hide() : showMobile();
-          }
-        }}
+        onClick={() => { open ? hide() : showAt(ref.current!.getBoundingClientRect()); }}
         className="flex items-center gap-3 flex-1 min-w-0 cursor-default select-none"
       >
         {children}
