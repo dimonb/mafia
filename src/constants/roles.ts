@@ -76,8 +76,8 @@ export const ROLE_DEFINITIONS: Record<RoleId, RoleDefinition> = {
   lawyer: {
     id: 'lawyer',
     name: 'Адвокат',
-    description: 'Ночью блокируешь одного игрока — он не может использовать способность. Играешь на стороне мафии.',
-    faction: 'mafia',
+    description: 'Ночью блокируешь одного игрока — он не может использовать способность.',
+    faction: 'town',
     bgClass: 'bg-amber-600',
     icon: '⚖️',
   },
