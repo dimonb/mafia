@@ -53,7 +53,7 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
         onPointerEnter={(e) => { if (e.pointerType === 'mouse') showDesktop(); }}
         onPointerLeave={(e) => { if (e.pointerType === 'mouse') hide(); }}
         onClick={(e) => {
-          if (e.nativeEvent.pointerType === 'touch') {
+          if ((e.nativeEvent as PointerEvent).pointerType === 'touch') {
             open ? hide() : showMobile();
           }
         }}
