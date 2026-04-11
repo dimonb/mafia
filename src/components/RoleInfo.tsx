@@ -1,48 +1,60 @@
 import { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 interface RoleInfoProps {
+  bgClass: string;
+  icon: string;
   description: string;
 }
 
-export default function RoleInfo({ description }: RoleInfoProps) {
+export default function RoleInfo({ bgClass, icon, description }: RoleInfoProps) {
   const [open, setOpen] = useState(false);
-  const ref = useRef<HTMLDivElement>(null);
+  const [pos, setPos] = useState({ top: 0, left: 0 });
+  const ref = useRef<HTMLButtonElement>(null);
+
+  function show() {
+    if (!ref.current) return;
+    const r = ref.current.getBoundingClientRect();
+    setPos({ top: r.top + r.height / 2, left: r.right + 8 });
+    setOpen(true);
+  }
+
+  function hide() { setOpen(false); }
 
   // Close on outside tap (mobile)
   useEffect(() => {
     if (!open) return;
-    function handlePointer(e: PointerEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
+    function handle(e: PointerEvent) {
+      if (ref.current && !ref.current.contains(e.target as Node)) hide();
     }
-    document.addEventListener('pointerdown', handlePointer);
-    return () => document.removeEventListener('pointerdown', handlePointer);
+    document.addEventListener('pointerdown', handle);
+    return () => document.removeEventListener('pointerdown', handle);
   }, [open]);
 
   return (
-    <div
-      ref={ref}
-      className="relative flex items-center"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
+    <>
       <button
-        onPointerDown={(e) => { e.stopPropagation(); setOpen((o) => !o); }}
-        className="w-5 h-5 rounded-full bg-slate-600 hover:bg-slate-500 text-slate-300 text-xs font-bold flex items-center justify-center shrink-0 transition-colors"
+        ref={ref}
+        onMouseEnter={show}
+        onMouseLeave={hide}
+        onPointerDown={(e) => { e.stopPropagation(); open ? hide() : show(); }}
+        className={`w-9 h-9 rounded-full ${bgClass} flex items-center justify-center text-lg shrink-0 mr-3 cursor-pointer`}
         aria-label="Описание роли"
       >
-        ?
+        {icon}
       </button>
 
-      {open && (
-        <div className="absolute right-7 top-1/2 -translate-y-1/2 w-52 bg-slate-700 border border-slate-600 text-white text-xs leading-relaxed rounded-xl px-3 py-2.5 shadow-xl z-20 pointer-events-none">
+      {open && createPortal(
+        <div
+          className="fixed z-50 w-56 bg-slate-700 border border-slate-600 text-white text-xs leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
+          style={{ top: pos.top, left: pos.left, transform: 'translateY(-50%)' }}
+        >
           {description}
-          {/* Arrow pointing right */}
-          <span className="absolute right-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-l-[5px] border-l-slate-600" />
-          <span className="absolute right-[-4px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-l-[5px] border-l-slate-700" />
-        </div>
+          <span className="absolute left-[-5px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-r-[5px] border-r-slate-600" />
+          <span className="absolute left-[-3px] top-1/2 -translate-y-1/2 w-0 h-0 border-y-4 border-y-transparent border-r-[5px] border-r-slate-700" />
+        </div>,
+        document.body
       )}
-    </div>
+    </>
   );
 }
