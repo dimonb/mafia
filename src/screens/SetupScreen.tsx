@@ -1,6 +1,7 @@
 import { useGame } from '../hooks/useGame';
 import { ALL_ROLE_IDS, ROLE_DEFINITIONS, FACTION_LABELS } from '../constants/roles';
 import RoleCounter from '../components/RoleCounter';
+import RoleInfo from '../components/RoleInfo';
 
 export default function SetupScreen() {
   const { state, dispatch } = useGame();
@@ -86,6 +87,8 @@ export default function SetupScreen() {
                     <div className="text-white text-sm font-medium">{role.name}</div>
                     <div className={`text-xs ${factionColor}`}>{FACTION_LABELS[role.faction]}</div>
                   </div>
+                  <RoleInfo description={role.description} />
+                  <div className="w-2" />
                   <RoleCounter
                     value={rc.count}
                     max={state.playerCount}
