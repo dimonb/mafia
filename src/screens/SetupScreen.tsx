@@ -80,11 +80,15 @@ export default function SetupScreen() {
                   key={roleId}
                   className="flex items-center px-4 py-3 border-b border-slate-700/50 last:border-0 md:last:border-b md:[&:nth-last-child(2)]:border-b-0"
                 >
-                  <RoleInfo bgClass={role.bgClass} icon={role.icon} description={role.description} />
-                  <div className="flex-1 min-w-0">
-                    <div className="text-white text-sm font-medium">{role.name}</div>
-                    <div className={`text-xs ${factionColor}`}>{FACTION_LABELS[role.faction]}</div>
-                  </div>
+                  <RoleInfo description={role.description}>
+                    <div className={`w-9 h-9 rounded-full ${role.bgClass} flex items-center justify-center text-lg shrink-0`}>
+                      {role.icon}
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-white text-sm font-medium">{role.name}</div>
+                      <div className={`text-xs ${factionColor}`}>{FACTION_LABELS[role.faction]}</div>
+                    </div>
+                  </RoleInfo>
                   <RoleCounter
                     value={rc.count}
                     max={state.playerCount}

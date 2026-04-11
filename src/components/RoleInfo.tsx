@@ -1,16 +1,16 @@
 import { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
+import type { ReactNode } from 'react';
 
 interface RoleInfoProps {
-  bgClass: string;
-  icon: string;
   description: string;
+  children: ReactNode;
 }
 
-export default function RoleInfo({ bgClass, icon, description }: RoleInfoProps) {
+export default function RoleInfo({ description, children }: RoleInfoProps) {
   const [open, setOpen] = useState(false);
   const [pos, setPos] = useState({ top: 0, left: 0 });
-  const ref = useRef<HTMLButtonElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
 
   function show() {
     if (!ref.current) return;
@@ -21,7 +21,6 @@ export default function RoleInfo({ bgClass, icon, description }: RoleInfoProps) 
 
   function hide() { setOpen(false); }
 
-  // Close on outside tap (mobile)
   useEffect(() => {
     if (!open) return;
     function handle(e: PointerEvent) {
@@ -33,16 +32,15 @@ export default function RoleInfo({ bgClass, icon, description }: RoleInfoProps) 
 
   return (
     <>
-      <button
+      <div
         ref={ref}
         onMouseEnter={show}
         onMouseLeave={hide}
         onPointerDown={(e) => { e.stopPropagation(); open ? hide() : show(); }}
-        className={`w-9 h-9 rounded-full ${bgClass} flex items-center justify-center text-lg shrink-0 mr-3 cursor-pointer`}
-        aria-label="Описание роли"
+        className="flex items-center gap-3 flex-1 min-w-0 cursor-default select-none"
       >
-        {icon}
-      </button>
+        {children}
+      </div>
 
       {open && createPortal(
         <div
