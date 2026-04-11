@@ -60,8 +60,8 @@ export const ROLE_DEFINITIONS: Record<RoleId, RoleDefinition> = {
   suicide_bomber: {
     id: 'suicide_bomber',
     name: 'Суицидник',
-    description: 'Если тебя убивают — убиваешь своего убийцу вместе с собой.',
-    faction: 'town',
+    description: 'Побеждаешь, если город убивает тебя на дневном голосовании. Если убивает мафия — обычная смерть.',
+    faction: 'solo',
     bgClass: 'bg-orange-600',
     icon: '💣',
   },
