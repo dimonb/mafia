@@ -4,7 +4,7 @@ export type RoleId =
   | 'don'
   | 'sheriff'
   | 'doctor'
-  | 'prostitute'
+  | 'lucky'
   | 'maniac'
   | 'suicide_bomber'
   | 'werewolf'
