@@ -39,11 +39,11 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
 
   useEffect(() => {
     if (!open) return;
-    function handle(e: PointerEvent) {
+    function handle(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node)) hide();
     }
-    document.addEventListener('pointerdown', handle);
-    return () => document.removeEventListener('pointerdown', handle);
+    document.addEventListener('click', handle);
+    return () => document.removeEventListener('click', handle);
   }, [open]);
 
   return (
@@ -52,8 +52,8 @@ export default function RoleInfo({ description, children }: RoleInfoProps) {
         ref={ref}
         onPointerEnter={(e) => { if (e.pointerType === 'mouse') showDesktop(); }}
         onPointerLeave={(e) => { if (e.pointerType === 'mouse') hide(); }}
-        onPointerDown={(e) => {
-          if (e.pointerType === 'touch') {
+        onClick={(e) => {
+          if (e.nativeEvent.pointerType === 'touch') {
             open ? hide() : showMobile();
           }
         }}
