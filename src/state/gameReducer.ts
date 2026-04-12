@@ -43,11 +43,14 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SET_PLAYER_COUNT': {
       const count = Math.min(20, Math.max(4, action.count));
-      return {
-        ...state,
-        playerCount: count,
-        roleCounts: buildInitialRoleCounts(count),
-      };
+      const nonCivilianTotal = state.roleCounts
+        .filter((rc) => rc.roleId !== 'civilian')
+        .reduce((s, rc) => s + rc.count, 0);
+      const newCivilianCount = Math.max(0, count - nonCivilianTotal);
+      const roleCounts = state.roleCounts.map((rc) =>
+        rc.roleId === 'civilian' ? { ...rc, count: newCivilianCount } : rc
+      );
+      return { ...state, playerCount: count, roleCounts };
     }
 
     case 'SET_ROLE_COUNT': {
