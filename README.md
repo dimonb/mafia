@@ -44,7 +44,7 @@
 
 ## Стек
 
-- **React 19** + **TypeScript** + **Vite 6**
+- **React 19** + **TypeScript 6** + **Vite 8**
 - **Tailwind CSS v4**
 - Состояние через `useReducer` (state machine)
 - Деплой: GitHub Pages (`dimonb/mafia`)
