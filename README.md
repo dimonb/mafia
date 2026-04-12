@@ -12,9 +12,20 @@
 
 ## Скриншоты
 
-| Настройка | Раздача (замок) | Карточка роли | Игровое поле |
-|:---------:|:---------------:|:-------------:|:------------:|
-| ![Настройка](docs/screenshot-setup.png) | ![Раздача](docs/screenshot-deal.png) | ![Роль](docs/screenshot-reveal.png) | ![Игра](docs/screenshot-game.png) |
+<table>
+  <tr>
+    <td align="center"><b>Настройка</b></td>
+    <td align="center"><b>Раздача (замок)</b></td>
+    <td align="center"><b>Карточка роли</b></td>
+    <td align="center"><b>Игровое поле</b></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshot-setup.png" width="180"/></td>
+    <td><img src="docs/screenshot-deal.png" width="180"/></td>
+    <td><img src="docs/screenshot-reveal.png" width="180"/></td>
+    <td><img src="docs/screenshot-game.png" width="180"/></td>
+  </tr>
+</table>
 
 ## Роли
 
