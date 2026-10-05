@@ -42,6 +42,9 @@ export default function SetupScreen() {
                 +
               </button>
             </div>
+            <div className="text-slate-400 text-xs leading-relaxed mt-4">
+              При изменении числа игроков роли подбираются автоматически. Их можно изменить вручную.
+            </div>
           </div>
 
           {/* Start button — visible in left column on desktop, sticky footer on mobile */}

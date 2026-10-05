@@ -103,9 +103,10 @@ export const ALL_ROLE_IDS: RoleId[] = [
 ];
 
 export function getDefaultRoleCounts(playerCount: number) {
-  const mafiaCount = Math.max(1, Math.floor(playerCount * 0.3));
+  // The Don is part of the mafia's roughly 30% share, not an extra member.
+  const totalMafia = Math.max(1, Math.floor(playerCount * 0.3));
   const donCount = playerCount >= 7 ? 1 : 0;
-  const totalMafia = mafiaCount + donCount;
+  const mafiaCount = totalMafia - donCount;
   const sheriffCount = 1;
   const doctorCount = playerCount >= 6 ? 1 : 0;
   const civilianCount = Math.max(1, playerCount - totalMafia - sheriffCount - doctorCount);

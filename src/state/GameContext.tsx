@@ -1,8 +1,9 @@
-import { createContext, useReducer } from 'react';
+import { createContext, useEffect, useReducer } from 'react';
 import type { ReactNode } from 'react';
 import type { GameState } from '../types/game';
 import type { GameAction } from './actions';
-import { gameReducer, initialState } from './gameReducer';
+import { createInitialState, gameReducer } from './gameReducer';
+import { loadGameSettings, saveGameSettings } from './gameSettings';
 
 export const GameContext = createContext<{
   state: GameState;
@@ -10,7 +11,11 @@ export const GameContext = createContext<{
 } | null>(null);
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(gameReducer, initialState);
+  const [state, dispatch] = useReducer(gameReducer, null, () => createInitialState(loadGameSettings()));
+
+  useEffect(() => {
+    saveGameSettings({ playerCount: state.playerCount, roleCounts: state.roleCounts });
+  }, [state.playerCount, state.roleCounts]);
   return (
     <GameContext.Provider value={{ state, dispatch }}>
       {children}

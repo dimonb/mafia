@@ -2,6 +2,7 @@ import type { GameState, RoleId } from '../types/game';
 import type { GameAction } from './actions';
 import { ALL_ROLE_IDS, getDefaultRoleCounts } from '../constants/roles';
 import { shuffle } from '../utils/shuffle';
+import type { GameSettings } from './gameSettings';
 
 const DEFAULT_PLAYER_COUNT = 6;
 
@@ -10,17 +11,22 @@ function buildInitialRoleCounts(playerCount: number) {
   return ALL_ROLE_IDS.map((id) => ({ roleId: id, count: defaults[id] }));
 }
 
-export const initialState: GameState = {
-  phase: 'setup',
-  playerCount: DEFAULT_PLAYER_COUNT,
-  roleCounts: buildInitialRoleCounts(DEFAULT_PLAYER_COUNT),
-  players: [],
-  currentDealingIndex: 0,
-  isRevealing: false,
-  currentDayNightPhase: 'day',
-  dayNumber: 1,
-  winner: null,
-};
+export function createInitialState(settings?: GameSettings | null): GameState {
+  const playerCount = settings?.playerCount ?? DEFAULT_PLAYER_COUNT;
+  return {
+    phase: 'setup',
+    playerCount,
+    roleCounts: settings?.roleCounts.map((role) => ({ ...role })) ?? buildInitialRoleCounts(playerCount),
+    players: [],
+    currentDealingIndex: 0,
+    isRevealing: false,
+    currentDayNightPhase: 'day',
+    dayNumber: 1,
+    winner: null,
+  };
+}
+
+export const initialState = createInitialState();
 
 function checkWinner(players: GameState['players']): GameState['winner'] {
   const alive = players.filter((p) => p.isAlive);
@@ -43,14 +49,8 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
   switch (action.type) {
     case 'SET_PLAYER_COUNT': {
       const count = Math.min(20, Math.max(4, action.count));
-      const nonCivilianTotal = state.roleCounts
-        .filter((rc) => rc.roleId !== 'civilian')
-        .reduce((s, rc) => s + rc.count, 0);
-      const newCivilianCount = Math.max(0, count - nonCivilianTotal);
-      const roleCounts = state.roleCounts.map((rc) =>
-        rc.roleId === 'civilian' ? { ...rc, count: newCivilianCount } : rc
-      );
-      return { ...state, playerCount: count, roleCounts };
+      if (count === state.playerCount) return state;
+      return { ...state, playerCount: count, roleCounts: buildInitialRoleCounts(count) };
     }
 
     case 'SET_ROLE_COUNT': {
@@ -118,7 +118,7 @@ export function gameReducer(state: GameState, action: GameAction): GameState {
     }
 
     case 'RESET_GAME':
-      return { ...initialState, roleCounts: buildInitialRoleCounts(initialState.playerCount) };
+      return createInitialState(state);
 
     default:
       return state;

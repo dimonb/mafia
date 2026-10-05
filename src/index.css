@@ -41,10 +41,7 @@ body {
   -webkit-backface-visibility: hidden;
   border-radius: 1rem;
   overflow: hidden;
-}
-
-.card-back {
-  background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  background: #1e293b;
 }
 
 .card-front {
