@@ -16,6 +16,8 @@
 
 Во время раздачи все карточки используют одинаковую нейтральную палитру и значок, чтобы цвет не выдавал роль в отражении.
 
+Интерфейс рассчитан на телефон: все роли доступны в списке по командам, кнопка раздачи остаётся доступной при прокрутке. Коснитесь любого места экрана, чтобы открыть роль; скрыть её и передать телефон можно только кнопкой. Светлая и тёмная темы следуют настройке устройства.
+
 ## Скриншоты
 
 <table>
@@ -26,9 +28,9 @@
     <td align="center"><b>Игровое поле</b></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshot-setup.png" width="180"/></td>
-    <td><img src="docs/screenshot-deal.png" width="180"/></td>
-    <td><img src="docs/screenshot-reveal.png" width="180"/></td>
+    <td><img src="docs/screenshot-setup.jpg" width="180"/></td>
+    <td><img src="docs/screenshot-deal.jpg" width="180"/></td>
+    <td><img src="docs/screenshot-reveal.jpg" width="180"/></td>
     <td><img src="docs/screenshot-game.png" width="180"/></td>
   </tr>
 </table>

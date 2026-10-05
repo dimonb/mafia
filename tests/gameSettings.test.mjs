@@ -208,12 +208,11 @@ test('every secret role card has identical colors, styling, and a shared neutral
     assert.ok(html.includes(ROLE_DEFINITIONS[roleId].name), 'role remains readable');
     assert.ok(html.includes(ROLE_DEFINITIONS[roleId].description), 'role instructions remain readable');
     assert.ok(!html.includes(ROLE_DEFINITIONS[roleId].icon), 'no role-specific colored emoji');
-    assert.equal((html.match(/🎭/g) ?? []).length, 2);
-    assert.equal((html.match(/grayscale/g) ?? []).length, 2);
+    assert.ok(html.includes('<span class="secret-mark" aria-hidden="true">М</span>'), 'every role uses the same neutral mark');
   }
 });
 
 test('face-down cards use the same presentation for every role', () => {
-  const back = (roleId) => renderToStaticMarkup(createElement(RoleCard, { roleId, revealed: false })).split('card-front')[0];
+  const back = (roleId) => renderToStaticMarkup(createElement(RoleCard, { roleId, revealed: false }));
   for (const roleId of ALL_ROLE_IDS) assert.equal(back(roleId), back('civilian'));
 });

@@ -1,62 +1,62 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useId } from 'react';
 import { createPortal } from 'react-dom';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 interface RoleInfoProps {
+  name: string;
   description: string;
   children: ReactNode;
 }
 
-export default function RoleInfo({ description, children }: RoleInfoProps) {
+export default function RoleInfo({ name, description, children }: RoleInfoProps) {
   const [open, setOpen] = useState(false);
-  const [style, setStyle] = useState<React.CSSProperties>({});
-  const ref = useRef<HTMLDivElement>(null);
+  const [style, setStyle] = useState<CSSProperties>({});
+  const ref = useRef<HTMLButtonElement>(null);
+  const tooltipId = useId();
 
-  function showAt(r: DOMRect) {
-    const tooltipWidth = 224; // w-56
-    if (r.right + 8 + tooltipWidth < window.innerWidth) {
-      // Enough space to the right — show there (desktop)
-      setStyle({ top: r.top + r.height / 2, left: r.right + 8, transform: 'translateY(-50%)' });
-    } else {
-      // Not enough space — show below, clamped to screen (mobile)
-      const left = Math.max(8, Math.min(r.left, window.innerWidth - tooltipWidth - 8));
-      setStyle({ top: r.bottom + 6, left });
-    }
+  function show() {
+    const rect = ref.current!.getBoundingClientRect();
+    const width = Math.min(256, window.innerWidth - 32);
+    setStyle({
+      width,
+      top: Math.max(8, Math.min(rect.bottom + 8, window.innerHeight - 140)),
+      left: Math.max(16, Math.min(rect.left, window.innerWidth - width - 16)),
+    });
     setOpen(true);
   }
 
-  function hide() { setOpen(false); }
-
-  // Close on any outside click
   useEffect(() => {
     if (!open) return;
-    function handle(e: MouseEvent) {
-      if (ref.current && !ref.current.contains(e.target as Node)) hide();
+    function outside(event: MouseEvent) {
+      if (!ref.current?.contains(event.target as Node)) setOpen(false);
     }
-    document.addEventListener('click', handle);
-    return () => document.removeEventListener('click', handle);
+    function dismiss() { setOpen(false); }
+    function onKey(event: KeyboardEvent) { if (event.key === 'Escape') dismiss(); }
+    document.addEventListener('click', outside);
+    document.addEventListener('scroll', dismiss, true);
+    document.addEventListener('keydown', onKey);
+    window.addEventListener('resize', dismiss);
+    return () => {
+      document.removeEventListener('click', outside);
+      document.removeEventListener('scroll', dismiss, true);
+      document.removeEventListener('keydown', onKey);
+      window.removeEventListener('resize', dismiss);
+    };
   }, [open]);
 
   return (
     <>
-      <div
-        ref={ref}
-        onPointerEnter={(e) => { if (e.pointerType === 'mouse') showAt(ref.current!.getBoundingClientRect()); }}
-        onPointerLeave={(e) => { if (e.pointerType === 'mouse') hide(); }}
-        onClick={() => { open ? hide() : showAt(ref.current!.getBoundingClientRect()); }}
-        className="flex items-center gap-3 flex-1 min-w-0 cursor-default select-none"
-      >
+      <button ref={ref} type="button" className="role-info" aria-label={`О роли: ${name}`}
+        aria-expanded={open} aria-describedby={open ? tooltipId : undefined}
+        onClick={() => open ? setOpen(false) : show()}
+        onPointerEnter={event => { if (event.pointerType === 'mouse') show(); }}
+        onPointerLeave={event => { if (event.pointerType === 'mouse') setOpen(false); }}
+        onBlur={() => setOpen(false)}>
         {children}
-      </div>
-
+      </button>
       {open && createPortal(
-        <div
-          className="fixed z-50 w-56 bg-slate-700 border border-slate-600 text-white text-xs leading-relaxed rounded-xl px-3 py-2.5 shadow-xl pointer-events-none"
-          style={style}
-        >
-          {description}
-        </div>,
-        document.body
+        <div id={tooltipId} role="tooltip" className="role-tooltip" style={style}>{description}</div>,
+        document.body,
       )}
     </>
   );
