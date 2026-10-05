@@ -20,7 +20,8 @@ button { font: inherit; cursor: pointer; touch-action: manipulation; }
 button:disabled { opacity: .35; cursor: default; }
 button:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px; }
 .no-select { user-select: none; -webkit-user-select: none; }
-.app-screen { min-height: 100svh; background: var(--app-bg); color: var(--app-ink); }
+.app-root { min-height: 100dvh; }
+.app-screen { min-height: 100dvh; background: var(--app-bg); color: var(--app-ink); }
 .mobile-shell { width: 100%; max-width: 480px; margin-inline: auto; }
 .brand { display: flex; align-items: center; gap: 12px; padding: max(24px, env(safe-area-inset-top)) 22px 20px; border-bottom: 1px solid var(--app-line); }
 .brand-mark { display: grid; place-items: center; width: 36px; height: 42px; border-radius: 8px; background: var(--app-accent); color: var(--app-on-accent); font: 24px Georgia, serif; }
@@ -57,7 +58,7 @@ button:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px
 .setup-status.invalid { color: var(--app-error); }
 .primary-action { width: 100%; min-height: 54px; display: flex; align-items: center; justify-content: center; gap: 12px; padding: 12px 16px; border: 0; border-radius: 15px; color: var(--app-on-accent); background: var(--app-accent); font-size: 16px; font-weight: 500; }
 .primary-action:active { filter: brightness(.93); }
-.lock-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 100svh; padding: max(24px, env(safe-area-inset-top)) 22px max(24px, env(safe-area-inset-bottom)); border: 0; background: var(--app-bg); color: var(--app-ink); text-align: center; }
+.lock-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; min-height: 100dvh; padding: max(24px, env(safe-area-inset-top)) 22px max(24px, env(safe-area-inset-bottom)); border: 0; background: var(--app-bg); color: var(--app-ink); text-align: center; }
 .lock-brand { font: 500 28px Georgia, serif; margin-bottom: 32px; }
 .dealing-progress { color: var(--app-muted); font-size: 12px; letter-spacing: 1px; margin: 0 0 12px; }
 .lock-player { font-size: 25px; font-weight: 500; margin-bottom: 6px; }
@@ -65,13 +66,13 @@ button:focus-visible { outline: 3px solid var(--app-accent); outline-offset: 3px
 .secret-mark { font: 64px Georgia, serif; color: var(--app-accent); }
 .secret-title, .app-screen h2.secret-title { font: 500 25px Georgia, serif; text-align: center; margin: 0; }
 .lock-note { font-size: 12px; color: var(--app-muted); }
-.reveal-screen { min-height: 100svh; display: flex; flex-direction: column; }
+.reveal-screen { min-height: 100dvh; display: flex; flex-direction: column; }
 .reveal-content { padding: 26px 22px 0; text-align: center; flex: 1; }
 .role-description { color: var(--app-muted); font-size: 14px; line-height: 1.6; margin: 0; text-align: center; }
 .faction-label { color: var(--app-muted); font-size: 12px; text-transform: uppercase; letter-spacing: 1px; margin-top: 4px; }
 .reveal-footer { padding: 0 22px max(24px, env(safe-area-inset-bottom)); }
 .reveal-footer .secondary { text-align: center; margin-top: 12px; }
-.completion-screen { min-height: 100svh; display: flex; flex-direction: column; }
+.completion-screen { min-height: 100dvh; display: flex; flex-direction: column; }
 .completion-content { padding: 32px 22px; display: flex; flex-direction: column; justify-content: center; flex: 1; text-align: center; gap: 18px; }
 .completion-mark { color: var(--app-good); font-size: 56px; }
 .completion-content .primary-action { margin-top: 12px; }

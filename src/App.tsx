@@ -7,7 +7,7 @@ export default function App() {
   const { state } = useGame();
 
   return (
-    <div className="min-h-screen">
+    <div className="app-root">
       {state.phase === 'setup' && <SetupScreen />}
       {state.phase === 'dealing' && <DealingScreen />}
       {state.phase === 'game' && <GameScreen />}
